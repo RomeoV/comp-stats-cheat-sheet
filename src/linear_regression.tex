@@ -1,0 +1,116 @@
+\begin{defnbox}\nospacing
+  \begin{defn}[Predictor Variable]\label{defn:}
+    Is a variable used in regression to predict another variable.\\
+    Thus predictor variables are the independent variables if they are manipulated rather than just measured. 
+  \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Output Variable]\label{defn:}
+    \todo[inline]{Add}
+  \end{defn}
+\end{defnbox}
+\subsection{ANOVA}
+\label{subsubsec:ANOVA}
+\begin{defnbox}\nospacing
+  \begin{defn}[ANOVA]\label{defn:ANOVA}
+  ANOVA stand for ANalysis Of VAriance.
+  The goal of ANOVA is to compare the mean of different groups and determine
+  if those means are significantly different from each other:
+  \begin{align*}
+    H_0: \mean_1=\mean_2=\ldots=\mean_{\idxp}
+  \end{align*}
+  It does this by comparing the variance with each group to the variance
+  between groups.
+  \todo[inline]{Add picture:https://www.youtube.com/watch?v=Bmi7w-vKSCs min 11:30}
+  \end{defn}
+\end{defnbox}
+\subsubsection{ANOVA for linear Regression}
+\begin{defnbox}\nospacing
+  \begin{defn}[ANOVA for regression]
+     ANOVA answers the question of how much of the variability of our
+     independent/output variable is explained by:
+     \begin{itemizenosep}
+         \item the predictor/explanatory variables in our model/regression and
+         \item how much is explained by other factors we are neglecting or are unable to account for
+     \end{itemizenosep}
+     \todo[inline]{add sample variance cref}
+     it does this by decomposing a measure of total sample variance (\cref{defn:?})into two terms:
+     \begin{align}
+       &&&\sum_{i=1}^{n}(y_i-\widebar{y})^2=\sum_{i=1}^{n}(\hat{y}-\widebar{y})^2+\sum_{i=1}^{n}(y-\widebar{y})^2\nonumber \\[-1\jot]
+       &\iff&&\norm{\Yvec-\widebar{\Yvec}}^2=\underbrace{\norm{\hat{\Yvec}-\widebar{\Yvec}}^2}_{\text{explained}}
+               -\underbrace{\norm{\Yvec-\hat{\Yvec}}^2}_{\text{unexplained}}\label{eq:ANOVA}
+     \end{align}
+  \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Explained Sum of Squares \blackrb{ESS}]\label{defn:ESS}
+    The Explained Sum of Squares is a measure of the
+    variability in the outcome variable that can be explained by the explanatory/predictor
+    variables and thus by our model:
+    \begin{align}
+      \text{ESS}=\sum_{i=1}^{n}(\hat{y}_i-\widebar{y})^2
+    \end{align}
+  \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Residual Sum of Squares \blackrb{RSS}]\label{defn:RSS}
+    The Residual Sum of Squares is a measure
+    of the variability in the outcome variable that can not be explained by the
+    predictor variables/our model:
+    \begin{align}
+      \text{RSS}=\sum_{i=1}^{n}(y_i-\hat{y}_i)^2=\sum_{i=1}^{n}r_i^2
+    \end{align}
+  \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Mean Squared Error \blackrb{MSE}]\label{defn:}
+    In regression analysis often used to refer to the unbiased estimate of error
+    variance.\\
+    Hence it is the mean sum of squares divided by the number of degrees of freedom.
+  \end{defn}
+\end{defnbox}
+\begin{notebox}[Attention]\nospacing
+  Usually (also in regression analysis) Mean Squared Error (MSE) refers to the total
+  mean squared prediction error.
+\end{notebox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Explained Mean Sum of Squares]
+    Here we fixed the first predictor $\betac_1=1$ in order to represent the
+    intercept and thus have to subtract 1 from the d.o.f.\
+    \begin{align*}
+      \frac{\norm{\hat{\Yvec}-\widebar{\Yvec}}^2}{\idxp-1}
+    \end{align*}
+  \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Residual Mean Sum of Squares]\label{defn:}
+    \begin{align*}
+       \frac{\norm{\Yvec-\hat{\Yvec}}^2}{n-p}
+    \end{align*}
+  \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+  \begin{defn}[Total Mean Sum of Squares]\label{defn:}
+    \begin{align*}
+       \frac{\norm{\Yvec-\widebar{\Yvec}}^2}{p-1+n-p}=
+       \frac{\norm{\Yvec-\widebar{\Yvec}}^2}{n-1}
+    \end{align*}
+  \end{defn}
+\end{defnbox}
+\begin{proofbox}\nospacing
+   \begin{proof} \cref{eq:ANOVA}:
+     \todo[inline]{add proof from: https://en.wikipedia.org/wiki/Partition\_of\_sums\_of\_squares}
+   \end{proof} 
+\end{proofbox}
+\begin{sectionbox}[Null hypothesis]\nospacing
+     ANOVA can be used to test the null hypothesis if any of the predictor
+     variables has an influence on the output variable i.e.
+     \begin{align*}
+       &&&&&H_o:\betac_2=\ldots=\betac_{\idxp}=0&&\text{v.s.}\\[-1\jot]
+       &\exists\idxj\in{2,\ldots.\idxp}&&\text{s.t.}&& H_A:\betac_{\idxj}\neq0
+     \end{align*}
+\end{sectionbox}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../formulary"
+%%% End:
