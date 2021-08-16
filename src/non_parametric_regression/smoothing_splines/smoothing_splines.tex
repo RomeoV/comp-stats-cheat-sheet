@@ -1,0 +1,47 @@
+\begin{defnbox}\nospacing
+    \begin{defn}[\blackrb{Natural} Splines]\label{defn:splines}\leavevmode\\
+        \begin{minipage}[b]{0.58\textwidth}
+            Is a p.w.\ cubic polynomials\cref{defn:cubic_polynomials} of the form:
+            \begin{align}
+              \polynomial(x)=\sum_{i=1}^{\idxn}\betac_{i}\Basis_{j}(x)
+            \end{align}
+            defined on the intervals $[x_{i},x_{i+1})$ of a
+            set of sorted and unique values $x_{1}<x_{2}<\ldots<x_{\idxn}$, associated to $\idxn$ observations $\left\{y_{i}\right\}_{i=1}^{\idxn}$.
+        \end{minipage}\hfil
+        \begin{minipage}[c]{0.4\textwidth}
+        \centering{
+          \resizebox{\linewidth}{!}{\input{src/non_parametric_regression/smoothing_splines/figures/tikz/splines.tex}}
+        }
+        \end{minipage}
+        \begin{itemizenosep}
+            \item For the $n-1$ intervals we need to determined $(n-1)\cdot 4$ coefficients.
+            \item We have 3 continuity conditions for the $n-2$ inner nodes $i=2,\ldots,n-2$:
+            \begin{align}
+              &\forall\idxi=2,\ldots,n-2&&
+              \begin{aligned}
+                  &\polynomial(x_{i})=\polynomial(x_{i+1})\\
+                  &\polynomial'(x_{i})=\polynomial'(x_{i+1})\\
+                  &\polynomial''(x_{i})=\polynomial''(x_{i+1})
+              \end{aligned}
+            \end{align}
+            \item 2 natural conditions:
+            \begin{align}
+              \polynomial''(x_{1})=\polynomial''(x_{\idxn})=0
+            \end{align}
+        \end{itemizenosep}
+        Thus we have $4(n-1)-\left(3(n-2)+2\right)=n$ free parameters.
+    \end{defn}
+\end{defnbox}
+\begin{corbox}\nospacing
+    \begin{cor}[$\idxn$-Additional Side Constraints]\label{cor:solution}
+       \begin{align}
+         \norm{\Yvec-}
+       \end{align}
+    \end{cor}
+\end{corbox}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../../../formulary"
+%%% TeX-command-extra-options: "-shell-escape"
+%%% End:
