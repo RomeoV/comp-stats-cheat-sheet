@@ -1,0 +1,72 @@
+\begin{proofbox}\nospacing
+    \begin{proof}[Derivation of Nardaya Watson Kernel Estimator\cref{defn:nardaya_watson_kernel_estimator}]\label{proof:defn:nardaya_watson_kernel_estimator}
+        We know from\cref{eq:nonparametric_regression} that we want to estimate:
+        \begin{align*}
+          \int_{\R}y\fprob_{Y|X}(y|x)\diff y=\frac{y\fprob_{X,Y}(x,y)\diff y}{\fprob_{X}(x)}
+        \end{align*}
+        plugin in the \textit{univariate} and \textit{bivariate} kernel densities:
+        \begin{align*}
+          &\hat{\fprob}_{X}(x)=\frac{\sum_{\idxi=1}^{n}\Kernel \left(\frac{x-x_{\idxi}}{h}\right)}{nh}\\[-1\jot]
+          &\hat{\fprob}_{X,Y}(x,y)=\frac{\sum_{\idxi=1}^{n}\Kernel \left(\frac{x-x_{\idxi}}{h}\right)\Kernel \left(\frac{y-y_{\idxi}}{h}\right)}{nh^{2}}
+        \end{align*}
+        leads to the result.
+    \end{proof}
+\end{proofbox}
+\begin{proofbox}\nospacing
+    \begin{proof}[Kernel Reg.\ and lsq\cref{proposition:kernel_regression_is_weighted_least_squars}]
+        \label{proof:proposition:kernel_regression_is_weighted_least_squars}
+        \begin{align*}
+          &&&\pdv{\betac}\argmin_{\betac}\sum_{\idxi=1}\omega_{\idxi}(x)(y_{\idxi}-\betac)^{2}=0 \\[-1\jot]
+          &\Rightarrow&&\sum_{\idxi=1}^{n}\omega_{\idxi}Y_{\idxi}=\sum_{\idxi=1}^{n}\omega_{\idxi}\betac
+          \quad\Rightarrow\quad\betac=\frac{\sum_{\idxi=1}^{n}\omega_{\idxi}Y_{\idxi}}{\sum_{\idxi=1}^{n}\omega_{\idxi}}
+        \end{align*}
+    \end{proof}
+\end{proofbox}
+\begin{proofbox}\nospacing
+    \begin{proof}[The hat matrix\cref{defn:smoother_hat_matrix}]\label{proof:defn:smoother_hat_matrix}
+        From:
+        \begin{align}
+          \widehat{m}\left(x_{\idxj}\right)
+          =\sum_{\idxi=1}^{n}w_{\idxi}\left(x_{\idxj}\right)Y_{\idxi}&&
+          w_{\idxi}\left(x_{\idxj}\right)=\frac{\Kernel \left(\frac{x_{\idxj}-x_{\idxi}}{h}\right)}{\sum_{\idxk=1}^{n}\Kernel \left(\frac{x_{\idxj}-x_{\idxk}}{h}\right)}
+        \end{align}
+        we can directly read of $\vec{S}$ as it maps $Y_{\idxj}$ to $\widehat{m}(x_{\idxj})$.
+    \end{proof}
+\end{proofbox}
+\begin{proofbox}\nospacing
+    \begin{proof}[Covariance Matrix\cref{defn:covariance_of_the_estimator}]\label{proof:defn:covariance_of_the_estimator}
+        \begin{align*}
+          \Cov\left(\widehat{\vec{m}}(\vec{x})\right)=&\Cov\left(\widehat{\vec{Y}}\right)=
+          \Cov\left(\vec{S}\vec{Y}\right)=\vec{S}\Cov\left(\vec{Y}\right)\vec{S}^{\T}\\[-1\jot]
+          =&\vec{S}\Cov\left(\vec{\epsilonc}\right)\vec{S}^{\T}=\std_{\epsilonc}^{2}\vec{S}\vec{S}^{\T}
+        \end{align*}
+    \end{proof}
+\end{proofbox}
+\begin{proofbox}\nospacing
+    \begin{proof}[Optimal Bandwith Proof Sketch\cref{cor:the_optimal_bandwidth}]\label{proof:cor:the_optimal_bandwidth}
+        We want to find a $h(x)$ s.t.:
+        \begin{align}
+          \min_{h(x)}\Expect \left[\left(\widehat{m}^{h}(x)-m(x)\right)^{2}\right]&&\forall x\in\domain(m)
+        \end{align}
+        this can be decomposed into bias and variance i.e. lets assume a fixed $x$:
+        \begin{align*}
+          \Var\big[&\widehat{m}^{h}(x)-m(x)\big]=\\[-1\jot]
+        =&\Expect \left[\left(\widehat{m}^{h}(x)-m(x)\right)^{2}\right]
+          -\Expect \left[\widehat{m}^{h}(x)-m(x)\right]^{2}\\[-1\jot]
+          =&\Expect \left[\left(\widehat{m}^{h}(x)-m(x)\right)^{2}\right]
+          -\left(\Expect \left[\widehat{m}^{h}(x)\right]-m(x)\right)^{2}\\[-1\jot]
+          =&\text{MSE}-\left(\text{Bias}\right)^{2}
+        \end{align*}
+        \begin{align*}
+          \frac{1}{nh}\left(\ldots\right)\std_{\epsilonc}^{2}=\text{MSE}-\left(h^{2}\left(\Kernel,\std_{x},m,m''\right)\right)^{2}
+        \end{align*}
+        \begin{align*}
+          \dv{\text{MSE}}{h(x)}\eqs{!}0
+        \end{align*}
+    \end{proof}
+\end{proofbox}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: "../../../formulary"
+%%% End:

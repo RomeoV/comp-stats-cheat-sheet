@@ -1,0 +1,58 @@
+\begin{defnbox}\nospacing
+    \begin{defn}[\hfill\proofref{proof:defn:covariance_of_the_estimator}\newline Covariance of the Estimator]\label{defn:covariance_of_the_estimator}
+        \begin{align}
+          \Cov\left(\widehat{\vec{m}}(x)\right)=\std_{\epsilonc}^{2}\vec{S}\vec{S}^{\T}
+        \end{align}
+        \begin{align*}
+          &\Cov\left(\widehat{m}(x_{\idxi}),\widehat{m}(x_{\idxj})\right)
+                         =\std_{\epsilonc}^{2}(\vec{S}\vec{S}^{\T})_{\idxi\idxj}
+                         &&\Var{\widehat{m}(x_{\idxi})}=\std_{\epsilonc}^{2}(\vec{S}\vec{S}^{\T})_{\idxi\idxi}
+        \end{align*}
+    \end{defn}
+\end{defnbox}
+\begin{defnbox}\nospacing
+    \begin{defn}[Degrees of Freedom]\label{defn:degrees_of_freedom}
+        \begin{align}
+          \text{df}=\trace(\vec{S})\sum_{\idxi}^{n}S_{\idxi\idxi}
+        \end{align}
+    \end{defn}
+    \todo[inline]{add derivation from muiltple linear reg. part}
+\end{defnbox}
+\begin{propositionbox}\nospacing
+    \begin{proposition}[Estimation of the Error Variance]\label{proposition:estimation_of_the_error_variance}
+        We can estimate the true error variance $\std_{\epsilonc}^{2}$ by the residual sum of squares, scaled by the d.o.f.:
+        \begin{align}
+          \widehat{\std}_{\epsilonc}^{2}=\frac{\text{RSS}}{n-\text{df}}=
+          \frac{\sum_{\idxi=1}^{n}\left(Y_{\idxi}-\widehat{m}(x_{\idxi})\right)^{2}}{n-\text{df}}
+        \end{align}
+    \end{proposition}
+\end{propositionbox}
+\begin{sectionbox}\nospacing
+    Our estimator $\widehat{m}(x)$ is in the asymptotic limit normally distributed:
+    \begin{align}
+      \widehat{m}(x_{\idxi})\approx\Normaldist \left(\Expect{\widehat{m}(x_{\idxi})},\Var{\widehat{m}(x_{\idxi})}\right)
+    \end{align}
+    s.t.\ we can derive \textit{pointwise} confidence bounds:
+    \begin{align}
+      I=\widehat{m}(x_{\idxi})\pm1.96\cdot\widehat{\text{s.e.}}\left(\widehat{m}(x_{\idxi})\right)
+    \end{align}
+\end{sectionbox}
+\begin{attentionbox}{Attention}\nospacing
+    This confidence bound is not the true confidence interval for the expected value $\Expect{\widehat{m}(x_{\idxi})}$
+    as we have to subtract the bias from $\Expect{\widehat{m}(x_{\idxi})}$.
+    This shifts the confidence interval:
+    \begin{align}
+      I_{\text{true}}=I-\widehat{\text{bias}}
+    \end{align}
+\end{attentionbox}
+\begin{defnbox}\nospacing
+    \begin{defn}[Erosion]\label{defn:errosion}
+       Is the fact that we overestimate the valleys and underestimated the hills due to the bias.
+    \end{defn}
+\end{defnbox}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: "../../../formulary"
+%%% End:

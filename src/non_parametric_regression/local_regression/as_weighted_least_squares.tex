@@ -1,0 +1,15 @@
+\begin{propositionbox}\nospacing
+    \begin{proposition}[\hfill\proofref{proof:proposition:kernel_regression_is_weighted_least_squars}\newline
+        Kernel Regression is Weighted Least Squares]\label{proposition:kernel_regression_is_weighted_least_squars}\leavevmode\\
+        Kernel regression is equal to weighted least squares for fixed $x$:
+        \begin{align}
+          \widehat{m}(x)=&\argmin_{\betac}\sum_{\idxi=1}\omega_{\idxi}(x)(y_{\idxi}-\betac)^{2}\nonumber\\[-1\jot]
+          =&\sum_{\idxi=1}^{n}\Kernel \left(\frac{x-x_{\idxi}}{h}\right)(y_{\idxi}-\betac)^{2}\qquad\forall x
+        \end{align}
+    \end{proposition}
+\end{propositionbox}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: "../../../formulary"
+%%% End:

@@ -1,0 +1,20 @@
+\begin{defnbox}\nospacing
+    \begin{defn}[\hfill\proofref{proof:defn:nardaya_watson_kernel_estimator},\coderef{defnc:ksmooth},\coderef{defnc:lowes}\newline Nardaya Watson Kernel Estimator]\label{defn:nardaya_watson_kernel_estimator}
+        \begin{align}
+          \widehat{m}(x)=\frac{\sum_{\idxi=1}^{n}\Kernel \left(\frac{x-x_{\idxi}}{h}\right)Y_{\idxi}}{\sum_{\idxj=1}^{n}\Kernel \left(\frac{x-x_{\idxj}}{h}\right)}=\frac{\sum_{\idxi=1}^{n}\omega_{\idxi}Y_{\idxi}}{\sum_{\idxj=1}^{n}\omega_{\idxj}}
+          =:\sum_{\idxi=1}^{n}w_{\idxi}Y_{\idxi}
+          \label{eq:nardaya_watson_kernel_estimator}
+        \end{align}
+    \end{defn}
+\end{defnbox}
+\begin{notebox}[Note]\nospacing
+    \begin{itemizenosep}
+        \item For $h\to\infty$ we would obtain a constant line $Y=m(x)=\mean$
+        \item For $h\to0$ we would obtain a function that fits each point of the training set perfectly.
+    \end{itemizenosep}
+\end{notebox}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: "../../../formulary"
+%%% End:

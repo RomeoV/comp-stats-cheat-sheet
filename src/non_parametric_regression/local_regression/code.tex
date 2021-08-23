@@ -1,0 +1,18 @@
+\begin{defncbox}
+        \begin{defnc}[\newline locally weighted scatterplot smoothing Lowes\cref{defn:local_linear_regression}]\label{defnc:lowes}
+        is an implementation of \cref{eq:nardaya_watson_kernel_estimator} that uses an adaptive bandwidth $h$:\\
+            \begin{mintlinebox}{R}
+                lowess(x, y = NULL, f = 2/3, iter = 3, delta = 0.01 * diff(range(x)))
+            \end{mintlinebox}
+        \end{defnc}
+\end{defncbox}
+\begin{optionsbox}{\Rinline{f}}
+    Adapts bandwith $h$ s.t.\ always 2/3 of all the points are inside of the kernel.
+\end{optionsbox}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: "../../../formulary"
+%%% End:
