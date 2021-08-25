@@ -1,0 +1,73 @@
+\section{Multiple Linear Regression}\label{sec:multiple_linear_regression}
+\subsection{The Linear Model}\label{subsec:the_linear_model}
+\begin{sectionbox}\nospacing{}
+Assume $Y_i = x_{i}^{\top}\beta + \epsilon_{i}$ or $Y = X \times \beta + \epsilon$ with $X \in \mathcal{R}^{(n \times p)}; (n > p)$ and $\mathbb{E}[\epsilon_{i}]=0, Var(\epsilon_{i}) = \sigma^{2}$.
+$X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
+\end{sectionbox}
+\subsection{Least Squares Method}\label{subsec:least_squares_method}
+\begin{sectionbox}\nospacing{}
+  Least squares estimator is $\hat \beta = \argmin_{\beta} ||Y - X\beta||^{2}_{2} = {(X^{\top}X)}^{-1} X^{\top}Y$ (orthogonal projection of $Y$ onto $span(X)$).
+  Estimate $\hat{\sigma}^{2} = \frac{1}{n-p}\sum_{i=1}^{n}r_{i}^{2}$ with $\mathbb{E}[\hat{\sigma}^{2}] = \sigma^{2}$.
+\end{sectionbox}
+
+\begin{notebox}[Assumptions for Linear Model]\nospacing{}
+    \begin{enumeratenosep}[label=\roman*]
+        \item Linear regression equation is correct, i.e. $\mathbb{E}[\epsilon_{i}]=0\ \forall i$.
+        \item We measure $x_{i}$'s exactly. Else, need correction (?).
+        \item Error is homoscedastic, i.e. $Var(\epsilon_{i})=\sigma^{2}\ \forall i$. Else, use ``Weighted LS''.
+        \item Errors are uncorrelated, i.e. $Cov(\epsilon_{i}, \epsilon_{j}) = 0\ \forall i \neq j$. Else ``Generalized LS''.
+        \item Errors are jointly normally distributed. Else ``Robust Methods''.
+    \end{enumeratenosep}
+\end{notebox}
+
+\begin{notebox}[Moments of least squares estimates]\nospacing{}
+  Assume $\vec{Y}=X\vec{\beta} + \epsilon, \mathbb{E}[\vec{\epsilon}]=\vec{0},\ Cov(\vec{\epsilon} \vec{\epsilon}^{\top}) = \sigma^{2}I$ (all assumptions satisfied). Then
+  \begin{enumeratenosep}[label=\roman*]
+    \item $\mathbb{E}[\hat{\vec{\beta}}] = \vec{\beta}$ ($\hat{\vec{\beta}}$ is unbiased).
+    \item $\mathbb{E}[\hat{\vec{Y}}] = \mathbb{E}[\vec{Y}] = X\vec{\beta}$ and $\mathbb{E}[\vec{r}] = \vec{0}$.
+    \item $Cov(\hat{\vec{\beta}}) = \sigma^{2}{(X^{\top}X)}^{-1}$.
+    \item $Cov(\hat{\vec{Y}}) = \sigma^{2} P, Cov(\vec{r}) = \sigma^{2}(I-P)$.
+  \end{enumeratenosep}
+  If additionally $\epsilon_{i}, \dots, \epsilon_{n} \text{ i.i.d. } \sim \mathcal{N}(0, \sigma^{2})$, then
+  \begin{enumeratenosep}[label=\roman*]
+    \item $\hat{\vec{\beta}} \sim \mathcal{N}_{p}{(\vec{\beta}, \sigma^{2}(X^{\top}X))}^{-1}$
+    \item $\hat{\vec{Y}} \sim \mathcal{N}_{n}(X\vec{\beta}, \sigma^{2}),\ \vec{r} \sim \mathbb{N}_{n}(\vec{0}, \sigma^{2}(I-P))$
+    \item $\hat \sigma^{2} \sim \frac{\sigma^{2}}{n-p}\chi^{2}_{n-p}$.
+  \end{enumeratenosep}
+  Even when normality assumption doesn't hold, central limit theorem is a justification.
+\end{notebox}
+\subsection{Tests and Confidence Regions}\label{subsec:tests_and_confidence_regions}
+\begin{sectionbox}[T-test]\nospacing{}
+  Assume linear model with Gaussian errors (or ``large enough'' sample size), s.t. $\hat{\vec{\beta}} \sim \mathcal{N}_{p}{(\vec{\beta}, \sigma^{2}(X^{\top}X))}^{-1}$ is normally distributed.
+  Then we can test the null-hypothesis $H_{0,j}: \beta_{j = 0}$ against $H_{A,j}: \beta_{j \neq 0}$:
+  \[\frac{\hat \beta_{j}}{\sqrt{\sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}}} \sim \mathcal{N}(0,1)\] under the null-hypothesis $H_{0,j}$. Since $\sigma^{2}$ is unknown, replace by $\hat sigma^{2} \rightarrow$ T-test:
+  \[T_{j} = \frac{\hat \beta_{j}}{\sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}}} \sim \mathcal{N}(0,1)\] under the null-hypothesis $H_{0,j}$.
+\end{sectionbox}
+
+\begin{attentionbox}{Attention}\nospacing{}
+ As individual t-test for $H_{0,j}$ gives the effect of $\beta_{j}$ after subtracting the linear effect of all $\beta_{i\neq j}$.
+\end{attentionbox}
+
+ \begin{sectionbox}[Global null hypothesis and ANOVA]\nospacing{}
+  We can also check the global null-hypothesis $H_{0}: \beta_{2} = \cdots = \beta_{p} = 0$ using the \emph{analysis of variance} (ANOVA), which decomposes
+  \[||\vec{Y} - \bar{\vec{Y}}||^{2}_{2} = ||\hat{\vec{Y}} - \bar{\vec{Y}}||^{2}_{2} + ||\vec{Y} - \hat{\vec{Y}}||^{2}_{2}.\]
+  Under the global null-hypothesis $\mathbb{E}[\vec{Y}] = \mathcal{E}[\bar{\vec{Y}}] = const$. (no effect of predictor variables). Basically dividing $\sigma^{2}$ by $\hat \sigma^{2}$ yields F-statistic:
+  \[F = \frac{||\hat{\vec{Y}} - \bar{\vec{Y}}||^{2}/(p-1)}{||\hat{\vec{Y}}||^{2} / (n-p)} \sim F_{p-1,n-p}\] under the global null-hypothesis $H_{0}$.
+  ANOVA also yields \emph{goodness of fit} $R^{2} = \frac{||\hat{\vec{Y}} - \bar{\vec{Y}}||^{2}}{\vec{Y} - \bar{\vec{Y}}||^{2}}$, which should be around $1$.
+  Finally, we can also build a confidence interval using $\hat \beta_{j} \pm \sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}} \cdot t_{n-p;1-\alpha/2}$.
+ \end{sectionbox}
+
+\begin{attentionbox}{Attention}\nospacing{}
+ In \verb!summary.lm!, the term \emph{Std. Error} is $\sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}} = \sqrt{\hat{Var}(\hat \beta_{j})}$.
+\end{attentionbox}
+
+\subsection{Checking Model Assumptions}\label{subsec:checking_model_assumptions}
+\begin{sectionbox}[Tukey-Anscome Plot]\nospacing{}
+  Error should fluctuate randomly. If error increases linearly, do log-transform $\vec{Y} \mapsto \log{\vec{Y}}$. If error increases with $\sqrt{Y}$, do a square-root-transform $\vec{Y} \mapsto \sqrt{\vec{Y}}$.
+\end{sectionbox}
+\begin{sectionbox}[QQ-Plot/Normal-Plot]\nospacing{}
+  Plot empirical quantiles of residuals on y versus the theoretical quantiles of $\mathcal{N}(0,1)$ on x.
+  If assumption holds, get straight line with intercept $\mu$ and slope $\sigma$.
+  Z-shape: long-tailed distr.; Curved: skewed distr.
+\end{sectionbox}
+\subsection{Model Selection}\label{subsec:model_selection}
