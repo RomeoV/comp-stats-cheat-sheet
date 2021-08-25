@@ -60,6 +60,7 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
 \begin{attentionbox}{Attention}\nospacing{}
  In \verb!summary.lm!, the term \emph{Std. Error} is $\sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}} = \sqrt{\hat{Var}(\hat \beta_{j})}$.
 \end{attentionbox}
+\todo[inline]{ANOVA function for determining if a model is worth it.}
 
 \subsection{Checking Model Assumptions}\label{subsec:checking_model_assumptions}
 \begin{sectionbox}[Tukey-Anscome Plot]\nospacing{}
@@ -74,7 +75,7 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
 \subsection{Model Selection}\label{subsec:model_selection}
 \begin{sectionbox}\nospacing{}
   Assume again $\mathbb{E}[\epsilon_{i}] = 0, Var(\epsilon_{i} = \sigma^{2})$.
-  We need to adress \emph{bias-variance-tradeoff}.
+  We need to adress \emph{bias-variance trade-off}.
   Bias is defined as $\mathbb{E} [\hat f(x)] - f(x)$, variance as $q/n \cdot \sigma^{2}$ with $q \leq p$.
 \end{sectionbox}
 \begin{sectionbox}[Mallows $C_{p}$ statistic]\nospacing{}
@@ -82,6 +83,10 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
   Then $n^{-1} \sum_{i=1}^{n} \mathbb{E}\left[{(f(x) - \hat f_{\mathcal{I}}(x))}^{2}\right] \approx n^{-1}SSE(\mathcal{M})-\hat \sigma^{2} + 2\hat\sigma^{2}|\mathcal{M}|/n$, with $\mathcal{I}$ the indices of selected predictors and $|\mathcal{I}| = q$.
   Thus, we search for the model that minimizes the $C_{p}$-statistic with $C_{p}(\mathcal{M}) = \frac{SSE(\mathcal{M})}{\hat \sigma^{2}} - n + 2|\mathcal{M}|$.
   Otherwise Akaike's information criterion (AIC) or Bayesian information criterion (BIC). AIC is equivalent to $C_{p}$ for linear Gaussian models.
+  \begin{mintlinebox}{R}
+    require(leaps); fit.all <- regsubsets(y~., data=data)
+    p.regsubsets(fit.all)
+  \end{mintlinebox}
 \end{sectionbox}
 \begin{sectionbox}[Forwards and backwards selection]\nospacing{}
   \begin{description}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
@@ -90,6 +95,12 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
   \end{description}
   Backwards selection typically better but more expensive. When $p \geq n$, use forward selection.
   Both methods prone to overfitting --- p-values (and similar values) are \emph{not} valid anymore and effects look too significant.
+  \begin{mintlinebox}{R}
+    fit.empty <- lm(y~1, data=data)
+    fit.full <- lm(y~., data=data)
+    fit.bw <- step(fit.full, direction="backward")
+    fit.fw <- step(fit.full, direction="forward")
+  \end{mintlinebox}
 
 \end{sectionbox}
 
@@ -108,12 +119,23 @@ Nonparametric regression with \emph{one} predictor variable, i.e. $Y_{i} = m(x_{
   For $x_{i}$ equidistant there exists $h_{\textrm opt} = f(\sigma_{\epsilon}^{2}, m''(x))$ which can be iteratively found.
 
 \begin{mintlinebox}{R}
-    library (lokern); fit.lo <- lokerns (x, y)
+    ksmooth(x, y, kernel="normal", bandwidth=0.2, x.points=x)$y
+\end{mintlinebox}
+%$
+\begin{mintlinebox}{R}
+  # automatic bandwidth
+  fit.lo<-lokerns(X, Y, x.out=X, hetero=TRUE, is.rand=TRUE)
+  fit.gl<-glkerns(X, Y, x.out=X, hetero=TRUE, is.rand=TRUE)
 \end{mintlinebox}
 
-Instead of finding a local constant $m_{x}$ we can also find a local polynomial, i.e.\ we replace $m_{x}$ with $\beta_{1} + \sum_{i=2}^{p} \beta_{i}{(x_{i}-x)}^{i-1}$ (usually $p=2$ or $p=4$).
+Instead of finding a local constant $m_{x}$ we can also find a \emph{local polynomial}, i.e.\ we replace $m_{x}$ with $\beta_{1} + \sum_{i=2}^{p} \beta_{i}{(x_{i}-x)}^{i-1}$ (usually $p=2$ or $p=4$).
 Often better at edges and yields first derivative.
+  \begin{mintlinebox}{R}
+  fit.loess <- loess(y ~ x, data=data.frame(x=x, y=y_pert), span=0.2971339)
+  fit.loess.pred <- predict(fit.loess, newdata=x)
+  \end{mintlinebox}
 \end{sectionbox}
+
 \begin{sectionbox}[The hat matrix $\mathcal{S}$]\nospacing{}
   We want to construct $\mathcal{S}$ with $\hat{\vec{Y}} = \mathcal{S}\vec{Y}$, i.e.\ the linear operator mapping the labels to the predictions.
   Given the regression (smoothing) function $s$, we compute $\mathcal{S}_{\cdot j} = s(\vec{x}, \vec{e}_{j}, h)$ with $\vec{e}_{j}$ the $j$-th unit vector.
@@ -128,6 +150,26 @@ Often better at edges and yields first derivative.
 
   Additionally we can compute the \emph{degrees of freedom} for regression estimators with $df = \mathbf{tr}(\mathcal{S})$.
 
+  \begin{mintlinebox}{R}
+# Construct S matrix
+N <- length(x); Eye <- diag(N)
+S.nw <- S.lp <- S.ss <- matrix(0, nrow=N, ncol=N)
+for (j in 1:N) {
+  y_ <- Eye[, j]
+  S.nw[, j] <- ksmooth(x, y_, kernel="normal", bandwidth=0.2, x.points=x)$y ;$}
+
+est.nw<-est.lp<-est.ss<-matrix(0,nrow=length(x),ncol=nrep)
+for (i in 1:nrep) {
+  # generate y with disturbance
+  y_pert <- y + rnorm(length(x), mean=0, sd=1)
+  # try to fit NW
+  est.nw[, i] <- ksmooth(x=x, y=y_pert, kernel="normal", bandwidth=0.2, x.points=x)$y ;$
+  sig_sq.nw <- sum((y_pert - est.nw[, i])^2) / (length(y) - sum(diag(S.nw)))
+  se.nw[, i] <- sqrt(sig_sq.nw * diag(S.nw \%*\% t(S.nw)))}
+
+  \end{mintlinebox}
+
+
 \end{sectionbox}
 \subsection{Smoothing splines and penalized regression}\label{subsec:smoothing_splines_and_penalized_regression}
 \begin{sectionbox}\nospacing{}
@@ -137,12 +179,64 @@ Note that the minimizer is \emph{finite dimensional} --- it is a cubic spline th
 Choose $\lambda$ on the scale of $df = \mathbf{tr}(\mathcal{S}_{\lambda})$.
 Note that this is Ridge-type regression, which saves us from being overparametrized ($n$ points, $n$ parameters).
 In the exam, this is \emph{not} considered ``standard'' least squares.
+  \begin{mintlinebox}{R}
+  fit.ss<-smooth.spline(x, y_pert, spar=0.6)
+  fit.ss.pred[, i]<-predict(fit.ss, newdata=x)$y ; $
+  \end{mintlinebox}
 \end{sectionbox}
 
 \section{Cross Validation}\label{sec:cross-validation}
+Let $(X_{1}, Y_{1}), \dots, (X_{n}, Y_{n})$ i.i.d $\sim P$.
+We would like to compute $\mathbb{E}_{(X_{\textrm new}, Y_{\textrm new})}[\rho(\vec{Y}_{\textrm new}, \hat{m}_{\textrm train} (X_{\textrm new}))]$.
+\begin{sectionbox}[Constructing cross-validation datasets]\nospacing{}
+  Approaches include
+  \begin{description}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
+    \item[Validation set:] ---
+    \item[Leave-one-out CV:] $n^{-1}\sum_{i=1}^{n}\rho\left(Y_{i}, \hat{m}_{n-1}^{(-i)}(X_{i})\right)$. Approximately unbiased.
+    \item[$K$-fold CV:] $K^{-1}\sum_{i=1}^{K}|\mathcal{B}_{k}|^{-1}\sum_{i\in\mathcal{B}_{k}}\rho\left(Y_{i}, \hat{m}_{n-|\mathcal{B}_{k}|}^{(-\mathcal{B}_{k})}(X_{i})\right)$. Smaller variance than $1$-CV.
+    \item[Random division:] Like $K$-fold, but build $\mathcal{B}_{k}$ by sampling without replacement ($\approx 10\%$). Usually fastest.
+  \end{description}
+\end{sectionbox}
+\begin{sectionbox}[Tricks using hat matrix]\nospacing{}
+  For linear fitting operators and the loss $\rho(y, x) = (y-x)^{2}$ we can exploit the hat matrix and get the full $1$CV result in a single step using
+  \[
+    n^{-1}\sum_{i=1}^{n}\left(Y_{i}-\hat{m}_{n-1}^{(-i)}(X_{i})\right)^{2} = n^{-1}\sum_{i=1}^{n}\left(\frac{Y_{i}-\hat{m}(X_{i})}{1-\mathcal{S}_{ii}}\right)^{2}.
+  \]
+  It can be cheaper to just compute $\mathbf{tr}(\mathcal{S})$ (instead of all $\mathcal{S}_{ii}$), which leads to the \emph{generalized cross-validation}
+  \[
+    GCV = \frac{n^{-1}\sum_{i=1}^{n}(Y_{i}-\hat{m}(X_{i}))^{2}}{(1-n^{-1}\mathbf{tr}(\mathcal{S}))^{2}}.
+  \]
+  The two equations coincide if $\mathcal{S}_{ii}=c\ \forall i$.
+\end{sectionbox}
 
 \section{Bootstrap}\label{sec:bootstrap}
 
 \section{Classification}\label{sec:classification}
 
 \section{Flexible regression and classification methods}\label{sec:flexible_regression_and_classification_methods}
+
+\section{Bagging and Boosting}\label{sec:bagging_and_boosting}
+\begin{sectionbox}[Bagging and Subbagging]\nospacing{}
+  \textbf{B}ootstrap \textbf{agg}regat\textbf{ing} (bagging) (mostly on trees), uses $\hat g(\cdot): \mathbb{R}^{p}\rightarrow \mathbb{R}$ and ensembles them (which comes at the loss of interpretability).
+  \begin{enumeratenosep}[label=\roman*]
+    \item Generate bootstrap sample $(X_{1}^{\ast}, Y_{1}^{\ast}), \dots, (X_{n}^{\ast}, Y_{n}^{\ast})$ and compute $\hat{g}^{\ast}_{i=1}(\cdot)$. Repeat $B$ times.
+    \item Aggregate bootstrap estimates with $\hat{g}_{\textrm Bag}(\cdot) = B^{-1}\sum_{i=1}^{B} \hat{g}^{\ast}_{i}(\cdot) \approx \mathbb{E}^{\ast}[\hat{g}^{\ast}(\cdot)]$.
+  \end{enumeratenosep}
+  Note that $\hat{g}_{\textrm Bag}(\cdot) = \hat{g}(\cdot) + \underbrace{(\mathbb{E}^{\ast}[\hat{g}^{\ast}(\cdot)] -\hat{g}(\cdot))}_{\text{bootstrap bias estimate}}$.
+  We can reduce variance at price of higher bias (at least for trees).
+  In fact, for many $x$, $Var(\hat{g}_{\textrm Bag}(x)) < Var(\hat{g}(x))$. We can use larger trees (higher variance) to balance the bias-variance trade-off.
+
+  For \textbf{Sub}sample \textbf{agg}regat\textbf{ing} (Subbagging), we draw $(X_{1}^{\ast}, Y_{1}^{\ast}), \dots, (X_{m}^{\ast}, Y_{m}^{\ast})$ without replacement (e.g. with $m = \lfloor n/2\rfloor$), which can be cheaper overall and is equivalent to Bagging in some simple settings.
+\end{sectionbox}
+
+\begin{sectionbox}[$L_{2}$Boosting]\nospacing{}
+  Similar to Bagging, iterates on a ``base-learner'' by continually adding a fit on the residuals.
+  \begin{enumeratenosep}[label=\roman*]
+    \item Get first fit $\hat{g}_{1}(\cdot)$ by fitting on the full data. Compute residuals $U_{i} = Y_{i} - \hat{g}_{1}(X_{i})$ and let $\hat{f}_{1}(\cdot) = \nu \hat{g}_{1}(\cdot)$ with $0 < \nu \leq 1$ (typically $\nu = 0.1$).
+    \item For $m = 2, 3, \dots, M$ fit $\hat{g}_{m}(\cdot)$ on residuals $U_{i}$ and set $\hat{f}_{m}(\cdot) = \hat{f}_{m-1}(\cdot) + \nu \hat{g}_{m}(\cdot)$ (and update residuals using $\hat{f}_{m}(\cdot)$).
+  \end{enumeratenosep}
+  The main tuning parameter is the stopping point $M$. Boosting \emph{increases} the bias and can be used to ensemble trees to fit more complex data. See e.g.
+  \begin{mintlinebox}{R}
+      ?mboost; ?xgboost; ?gbm;
+  \end{mintlinebox}
+\end{sectionbox}
