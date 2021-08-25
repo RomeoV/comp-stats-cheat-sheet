@@ -77,12 +77,12 @@ landscape
 % Documents Definitions title, date, ...
 % ==============================================================================
 
-  \title{Title}
-  % Graphic-paths important when including pdf_tikz pictures e.g. with inkscape
-  % ------------------------------------------------------------------------------ 
-  \graphicspath{{figures/}
-                %{figures/ch1/}
-          }
+\title{Title}
+% Graphic-paths important when including pdf_tikz pictures e.g. with inkscape
+% ------------------------------------------------------------------------------
+\graphicspath{{figures/}
+              %{figures/ch1/}
+        }
 
 \DeclareMathVersion{normal2}
 \DeclareMathVersion{normal3}
@@ -90,45 +90,18 @@ landscape
 % Document begin
 % ==============================================================================
 \begin{document}
-\input{src/linear_regression.tex}
-\section{Non-Parametric Regression}\label{sec:non-parametric_regression}
-  \input{src/non_parametric_regression.tex}
-  \subsection{Kernel Regression}\label{subsec:local_regression}
-  \subsection{Local Nonparametric Regression}\label{subsubsec:local_linear_regression}
-    \input{src/non_parametric_regression/local_regression/local_linear_regression.tex}
-    \input{src/non_parametric_regression/local_regression/as_weighted_least_squares.tex}
-    \subsubsection{The hat Matrix}\label{subsubsec:the_hat_matrix}
-      \input{src/non_parametric_regression/local_regression/hat_matrix.tex}
-      \subsubsubsection{Variance Estimates}\label{subsubsubsec:variance_estimates}
-      \input{src/non_parametric_regression/local_regression/variance.tex}
-      \subsubsection{The Optimal Bandwith}\label{subsubsec:the_optimal_bandwith}
-      \input{src/non_parametric_regression/local_regression/hopt.tex}
-      \subsubsection{Local Polynomial nonparametric Regression}\label{subsubsec:local_polynomial_nonparametric_regression}
-      \input{src/non_parametric_regression/local_regression/polynomial.tex}
-  \subsection{Smoothing Splines}\label{subsec:smoothing_splines}
-    \input{src/non_parametric_regression/smoothing_splines/smoothing_splines.tex}
-\section{Cross Validation}\label{sec:cross_validation}
-    \input{src/cross_validation/cross_validation.tex}
-
-\subsection{Proofs}\label{subsec:proofs}
-    \input{src/non_parametric_regression/local_regression/proofs.tex}
-\subsection{Examples}\label{subsec:examples}
-    \input{ml_submodule/src/assesment_and_selection/data/examples.tex}
-\subsection{Coding}\label{subsec:coding}
-    \input{src/non_parametric_regression/local_regression/coding.tex}
-    \input{src/non_parametric_regression/local_regression/code.tex}
-    \input{src/non_parametric_regression/lokern/code.tex}
-    \input{src/non_parametric_regression/smoothing_splines/coding.tex}
-
+\include{src/romeos_cheat_sheet.tex}
+\include{src/linear_regression.tex}
+\include{all-the-rest.tex}
 
 \newpage
 \mathversion{normal2}
 \section*{Machine Learning Appendix}\label{sec:ml_appendix}
-  \input{ml_submodule/ml.tex}
+%\include{ml_submodule/ml.tex}
 \mathversion{normal}
 \newpage
 \mathversion{normal3}
-\input{math_submodule/math.tex}
+%\include{math_submodule/math.tex}
 \mathversion{normal}
 \newpage
 
