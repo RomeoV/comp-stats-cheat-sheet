@@ -97,7 +97,7 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
   \end{mintlinebox}
 \end{sectionbox}
 \begin{sectionbox}[Forwards and backwards selection]\nospacing{}
-  \textbf{Forward selection:} (i) Start with empty model. (ii) (Greedily) Keep adding variable that reduces the residual sum of squares. (iii) When done, pick submodel which minimizes $C_{p}$.
+  \textbf{Forward selection:} (i) Start with empty model. (ii) (Greedily) Keep adding variable that reduces the residual sum of squares the most. (iii) When done, pick submodel which minimizes $C_{p}$.
 
   \textbf{Backward selection:} (i) Start with full model. (ii) (Greedily) Keep excluding predictor that increases the residual sum of squares the least. (iii) When done, pick submodel which minimizes $C_{p}$.
   Backwards selection typically better but more expensive. When $p \geq n$, use forward selection.
@@ -486,6 +486,8 @@ plotmo(fit, degree2=FALSE, caption="main effects")
 	\end{mintlinebox}
 \end{sectionbox}
 
+\subsection{Trees}%
+\label{sub:trees}
 \begin{sectionbox}[Classification and Regression Trees]\nospacing{}
 $g_{tree}(\mathbf{x}) = \sum_{r=1}^{M}\beta_r 1_{[\mathbf{x}\in \mathcal{R}_r]}$, where $\mathcal{P} \{\mathcal{R}_1,.., \mathcal{R}_M\}$ is a partition of $\mathbb{R}^p$. The function is piecewise constant. When partition is given, estimate $\hat{\beta}_r = \sum_{i=1}^{n}Y_i 1_{[\mathbf{x}\in \mathcal{R}_r]}/\sum_{i=1}^{n}1_{[\mathbf{x}\in \mathcal{R}_r]}$. For multiclass classification $\hat{\pi}_j(\mathbf{x}) = \sum_{i=1}^{n}1_{[Y_i =j]} 1_{[\mathbf{x}\in \mathcal{R}_r]}/\sum_{i=1}^{n}1_{[\mathbf{x}\in \mathcal{R}_r]}$ for $\mathbf{x} \in \mathcal{R}_r$. Greddy algorithm to find axes parallel partition:
 \begin{enumeratenosep}[label=\roman*]
@@ -509,12 +511,23 @@ pruned.tree = prune.rpart(tree, cp=cp.opt)
 \end{sectionbox}
 
 
-\subsection{Trees}%
-\label{sub:trees}
+\begin{mintlinebox}{R}
+  rf <- randomForest(Boston.train, y.train, xtest=Boston.test, ytest=y.test, ntree=500, mtry=ncol(Boston.train))
+  mean(rf$mse)
+  mean(rf$test$mse) $
+\end{mintlinebox}
 
 \subsection{Ridge and Lasso}%
 \label{sub:ridge_and_lasso}
 
+\begin{mintlinebox}{R}
+  fit <- glmnet(x.train, y.train, lambda=100, alpha=1)
+  fit$beta
+  fit_2 <- cv.glmnet(x.train, y.train, lambda=grid.lambda, alpha=1, type.measure="mse")
+  mean((predict(fit_2, newx=x.test, s="lambda.min") - y.test)^2)
+  fit_3 <- cv.glmnet(x.train, y.train, lambda=grid.lambda, alpha=0, type.measure="mse")
+  mean((predict(fit_3, newx=x.test, s=fit_3$lambda.min) - y.test)^2) 
+\end{mintlinebox}
 
 \section{Bagging and Boosting}\label{sec:bagging_and_boosting}
 \begin{sectionbox}[Bagging and Subbagging]\nospacing{}
