@@ -1,10 +1,10 @@
 \noindent Summary for \emph{Computational Statistics 2021 @ ETH}\\
-by Romeo Valentin (\url{github.com/RomeoV})
+by Romeo Valentin, Laurens Lueg and Georg Pollak
 \section{Multiple Linear Regression}\label{sec:multiple_linear_regression}
 \subsection{The Linear Model}\label{subsec:the_linear_model}
 \begin{sectionbox}\nospacing{}
-Assume $Y_i = x_{i}^{\top}\beta + \epsilon_{i}$ or $Y = X \times \beta + \epsilon$ with $X \in \mathcal{R}^{(n \times p)}; (n > p)$ and $\mathbb{E}[\epsilon_{i}]=0, Var(\epsilon_{i}) = \sigma^{2}$.
-$X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
+  Assume $Y_i = x_{i}^{\top}\beta + \epsilon_{i}$ or $Y = X \times \beta + \epsilon$ with $X \in \mathcal{R}^{(n \times p)}; (n > p)$ and $\mathbb{E}[\epsilon_{i}]=0, Var(\epsilon_{i}) = \sigma^{2}$.
+  $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
 \end{sectionbox}
 \subsection{Least Squares Method}\label{subsec:least_squares_method}
 \begin{sectionbox}\nospacing{}
@@ -13,13 +13,13 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
 \end{sectionbox}
 
 \begin{notebox}[Assumptions for Linear Model]\nospacing{}
-    \begin{enumeratenosep}[label=\roman*]
-        \item Linear regression equation is correct, i.e. $\mathbb{E}[\epsilon_{i}]=0\ \forall i$.
-        \item We measure $x_{i}$'s exactly. Else, need correction (?).
-        \item Error is homoscedastic, i.e. $Var(\epsilon_{i})=\sigma^{2}\ \forall i$. Else, use ``Weighted LS''.
-        \item Errors are uncorrelated, i.e. $Cov(\epsilon_{i}, \epsilon_{j}) = 0\ \forall i \neq j$. Else ``Generalized LS''.
-        \item Errors are jointly normally distributed. Else ``Robust Methods''.
-    \end{enumeratenosep}
+  \begin{enumeratenosep}[label=\roman*]
+    \item Linear regression equation is correct, i.e. $\mathbb{E}[\epsilon_{i}]=0\ \forall i$.
+    \item We measure $x_{i}$'s exactly. Else, need correction (?).
+    \item Error is homoscedastic, i.e. $Var(\epsilon_{i})=\sigma^{2}\ \forall i$. Else, use ``Weighted LS''.
+    \item Errors are uncorrelated, i.e. $Cov(\epsilon_{i}, \epsilon_{j}) = 0\ \forall i \neq j$. Else ``Generalized LS''.
+    \item Errors are jointly normally distributed. Else ``Robust Methods''.
+  \end{enumeratenosep}
 \end{notebox}
 
 \begin{notebox}[Moments of least squares estimates]\nospacing{}
@@ -43,32 +43,23 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
   Assume linear model with Gaussian errors (or ``large enough'' sample size), s.t. $\hat{\vec{\beta}} \sim \mathcal{N}_{p}\left(\vec{\beta}, \sigma^{2}{(X^{\top}X)}^{-1}\right)$ is normally distributed.
   Then we can test the null-hypothesis $H_{0,j}: \beta_{j = 0}$ against $H_{A,j}: \beta_{j \neq 0}$:
   \[\frac{\hat \beta_{j}}{\sqrt{\sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}}} \sim \mathcal{N}(0,1) \Rightarrow  T_{j} = \frac{\hat \beta_{j}}{\sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}}} \sim t_{n-p}\ \] under the null-hypothesis $H_{0,j}$. Unknown $\sigma^{2}$ is replaced by $\hat \sigma^{2}$. Note that $t_{n-p} \approx \mathcal{N}$.
+  An individual t-test for $H_{0,j}$ gives the effect of $\beta_{j}$ after subtracting the linear effect of all $\beta_{i\neq j}$.
+  Note that in \verb!summary.lm!, the term \emph{Std. Error} is $\sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}} = \sqrt{\hat{Var}(\hat \beta_{j})}$.
 \end{sectionbox}
 
-\begin{attentionbox}{Attention}\nospacing{}
- As individual t-test for $H_{0,j}$ gives the effect of $\beta_{j}$ after subtracting the linear effect of all $\beta_{i\neq j}$.
-\end{attentionbox}
-
- \begin{sectionbox}[Global null hypothesis and ANOVA]\nospacing{}
+\begin{sectionbox}[Global null hypothesis and ANOVA]\nospacing{}
   We can also check the global null-hypothesis $H_{0}: \beta_{2} = \cdots = \beta_{p} = 0$ using the \emph{analysis of variance} (ANOVA), which decomposes
   \[||\vec{Y} - \bar{\vec{Y}}||^{2}_{2} = ||\hat{\vec{Y}} - \bar{\vec{Y}}||^{2}_{2} + ||\vec{Y} - \hat{\vec{Y}}||^{2}_{2}.\]
-  Under the global null-hypothesis $\mathbb{E}[\vec{Y}] = \mathcal{E}[\bar{\vec{Y}}] = const$. (no effect of predictor variables). $\sigma^{2}/ \hat \sigma^{2}$ yields F-statistic:
+  Under the global null-hypothesis $\mathbb{E}[\vec{Y}] = \mathbb{E}[\bar{\vec{Y}}] = const$. (no effect of predictor variables). $\sigma^{2}/ \hat \sigma^{2}$ yields F-statistic:
   \[F = \frac{||\hat{\vec{Y}} - \bar{\vec{Y}}||^{2}/(p-1)}{||\vec{Y} - \hat{\vec{Y}}||^{2} / (n-p)} \sim F_{p-1,n-p}\] under the global null-hypothesis $H_{0}$.
   ANOVA also yields \emph{goodness of fit} $R^{2} = \frac{||\hat{\vec{Y}} - \bar{\vec{Y}}||^{2}}{||\vec{Y} - \bar{\vec{Y}}||^{2}}$, which should be around $1$.
   Finally, we can also build a confidence interval using $\hat \beta_{j} \pm \sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}} \cdot t_{n-p;1-\alpha/2}$.
-   \begin{mintlinebox}{R}
-  	anova(fit) # global F test
-  	# partial F test - sig. of predictors in .full but not .part
-  	anova(fit.full, fit.part)
-  \end{mintlinebox}
-  
-  
- \end{sectionbox}
-
-\begin{attentionbox}{Attention}\nospacing{}
- In \verb!summary.lm!, the term \emph{Std. Error} is $\sqrt{\hat \sigma^{2}{{(X^{\top}X)}^{-1}_{jj}}} = \sqrt{\hat{Var}(\hat \beta_{j})}$.
-\end{attentionbox}
-
+\end{sectionbox}
+\begin{mintlinebox}{R}
+  anova(fit) # global F test
+  # partial F test - sig. of predictors in .full but not .part
+  anova(fit.part, fit.full)
+\end{mintlinebox}
 
 \subsection{Checking Model Assumptions}\label{subsec:checking_model_assumptions}
 \begin{sectionbox}[Tukey-Anscome Plot]\nospacing{}
@@ -124,11 +115,11 @@ $X$ is often augmented with $(1_{N\times 1})$ to use $\beta_{1}$ as bias.
   Naturally, the bandwidth also induces a \emph{bias-variance trade-off}.
   Note that
   \(
-    MSE(x) = \mathbb{E}\left[\left(\hat f(x)-f(x)\right)^2\right]=\left(\mathbb{E}[\hat f(x)] - f(x)\right)^2 + Var(\hat f(x))
+  MSE(x) = \mathbb{E}\left[\left(\hat f(x)-f(x)\right)^2\right]=\left(\mathbb{E}[\hat f(x)] - f(x)\right)^2 + Var(\hat f(x))
   \), so we can try to minimize the integrated $MSE$ over all points to find the best bandwidth.
 
-  If we know $f$ and $f''$ we can compute the bias and variance analytically (up to some precision).
-  From this we can derive global asymptotically optimal bandwidths, which can be useful if we can at least estimate $f$ and $f''$, and this can also be extended to local bandwidths.
+%   If we know $f$ and $f''$ we can compute the bias and variance analytically (up to some precision).
+%   From this we can derive global asymptotically optimal bandwidths, which can be useful if we can at least estimate $f$ and $f''$, and this can also be extended to local bandwidths.
 \end{sectionbox}
 \begin{sectionbox}[Density estimation in higher dimensions]\nospacing{}
   Basically use $\hat f(\vec{x}) = \frac{1}{nh^d}\sum_{i=1}^nK((\vec{x}-\vec{X}_i)/h)$ with a Kernel that supports vectors.
@@ -143,29 +134,29 @@ Nonparametric regression with \emph{one} predictor variable, i.e. $Y_{i} = m(x_{
 \begin{sectionbox}[Kernel regression estimator]\nospacing{}
   A ``locally weighted'' approach yields the NW kernel estimator
   \begin{equation}\label{eq:nw_regressor}
-  \hat m(x) = \frac{\sum_{i=1}^{n} \omega_{i}Y_{i}}{\sum_{i}\omega_{i}} = \argmin_{m_{x} \in \mathbb{R}}\sum_{i=1}^{n}\omega_{i}{(Y_{i}-m_{x})}^{2}
+    \hat m(x) = \frac{\sum_{i=1}^{n} \omega_{i}Y_{i}}{\sum_{i}\omega_{i}} = \argmin_{m_{x} \in \mathbb{R}}\sum_{i=1}^{n}\omega_{i}{(Y_{i}-m_{x})}^{2}
   \end{equation}
   with $\omega_{i} = K\left(\frac{x_{i}-x}{h}\right)$ a kernel centered at $x_{i}$ and bandwidth $h$.
   As $h$ small $\rightarrow$ large then (high variance) $\rightarrow$ (high bias).
   For $x_{i}$ equidistant there exists $h_{\textrm opt} = f(\sigma_{\epsilon}^{2}, m''(x))$ which can be iteratively found.
 
-\begin{mintlinebox}{R}
+  \begin{mintlinebox}{R}
     ksmooth(x, y, kernel="normal", bandwidth=0.2, x.points=x)$y$
-\end{mintlinebox}
-%$
-\begin{mintlinebox}{R}
-  # automatic bandwidth
-  fit.lo<-lokerns(X, Y, x.out=X, hetero=TRUE, is.rand=TRUE)
-  fit.gl<-glkerns(X, Y, x.out=X, hetero=TRUE, is.rand=TRUE)
-\end{mintlinebox}
+  \end{mintlinebox}
+  %$
+  \begin{mintlinebox}{R}
+    # automatic bandwidth
+    fit.lo<-lokerns(X, Y, x.out=X, hetero=TRUE, is.rand=TRUE)
+    fit.gl<-glkerns(X, Y, x.out=X, hetero=TRUE, is.rand=TRUE)
+  \end{mintlinebox}
 \end{sectionbox}
 
 \begin{sectionbox}[Local polynomial regression estimator]\nospacing{}
-Instead of finding a local constant $m_{x}$ we can also find a \emph{local polynomial}, i.e.\ we replace $m_{x}$ with $\beta_{1} + \sum_{i=2}^{p} \beta_{i}{(x_{i}-x)}^{i-1}$ (usually $p=2$ or $p=4$).
-Often better at edges and yields first derivative.
+  Instead of finding a local constant $m_{x}$ we can also find a \emph{local polynomial}, i.e.\ we replace $m_{x}$ with $\beta_{1} + \sum_{i=2}^{p} \beta_{i}{(x_{i}-x)}^{i-1}$ (usually $p=2$ or $p=4$).
+  Often better at edges and yields first derivative.
   \begin{mintlinebox}{R}
-  fit.loess <- loess(y ~ x, data=data.frame(x=x, y=y_pert), span=0.2971339, surface='direct')
-  fit.loess.pred <- predict(fit.loess, newdata=x)
+    fit.loess <- loess(y ~ x, data=data.frame(x=x, y=y_pert), span=0.2971339, surface='direct')
+    fit.loess.pred <- predict(fit.loess, newdata=x)
   \end{mintlinebox}
 \end{sectionbox}
 
@@ -182,39 +173,36 @@ Often better at edges and yields first derivative.
   \end{itemize}
 
   Additionally we can compute the \emph{degrees of freedom} for regression estimators with $df = \mathbf{tr}(\mathcal{S})$.
-
-  \begin{mintlinebox}{R}
-# Construct S matrix
-N <- length(x); Eye <- diag(N)
-S.nw <- S.lp <- S.ss <- matrix(0, nrow=N, ncol=N)
-for (j in 1:N) {
-  y_ <- Eye[, j]
+\end{sectionbox}
+\begin{mintlinebox}{R}
+  # Construct S matrix
+  N <- length(x); Eye <- diag(N)
+  S.nw <- S.lp <- S.ss <- matrix(0, nrow=N, ncol=N)
+  for (j in 1:N) {
+    y_ <- Eye[, j]
   S.nw[, j] <- ksmooth(x, y_, kernel="normal", bandwidth=0.2, x.points=x)$y ;$}
 
-est.nw<-est.lp<-est.ss<-matrix(0,nrow=length(x),ncol=nrep)
-for (i in 1:nrep) {
-  # generate y with disturbance
-  y_pert <- y + rnorm(length(x), mean=0, sd=1)
-  # try to fit NW
-  est.nw[, i] <- ksmooth(x=x, y=y_pert, kernel="normal", bandwidth=0.2, x.points=x)$y ;$
-  sig_sq.nw <- sum((y_pert - est.nw[, i])^2) / (length(y) - sum(diag(S.nw)))
+  est.nw<-est.lp<-est.ss<-matrix(0,nrow=length(x),ncol=nrep)
+  for (i in 1:nrep) {
+    # generate y with disturbance
+    y_pert <- y + rnorm(length(x), mean=0, sd=1)
+    # try to fit NW
+    est.nw[, i] <- ksmooth(x=x, y=y_pert, kernel="normal", bandwidth=0.2, x.points=x)$y ;$
+    sig_sq.nw <- sum((y_pert - est.nw[, i])^2) / (length(y) - sum(diag(S.nw)))
   se.nw[, i] <- sqrt(sig_sq.nw * diag(S.nw \%*\% t(S.nw)))}
+\end{mintlinebox}
 
-  \end{mintlinebox}
-
-
-\end{sectionbox}
 %\subsection{}\label{subsec:smoothing_splines_and_penalized_regression}
 \begin{sectionbox}[Smoothing splines and penalized regression]\nospacing{}
-High-order polynomials do not work, so splines are used. We discuss splines \emph{without} having to specify the knots.
-Find $\argmin_{m \in C^{0}(\mathbb{R})} \sum_{i=1}^{n}(Y_{i} - m(x_{i}))^{2} + \lambda \int_{\mathbb{R}}m''(z)^{2} dz$.
-Note that the minimizer is \emph{finite dimensional} --- it is a cubic spline that can be computed using a set of basis functions $m_{\lambda}(x) = \sum_{j=1}^{n}\beta_{j}B_{j}(x)$ or $||\vec{Y} - B\vec{\beta}||^{2}+\lambda \vec{\beta}^{\top}\Omega\vec{\beta} \Rightarrow \hat{\vec{\beta}} = {(B^{\top}B + \lambda\Omega)}^{-1}B^{\top}\vec{Y}$.
-Choose $\lambda$ on the scale of $df = \mathbf{tr}(\mathcal{S}_{\lambda})$.
-Note that this is Ridge-type regression, which saves us from being overparametrized ($n$ points, $n$ parameters).
-In the exam, this is \emph{not} considered ``standard'' least squares.
+  High-order polynomials do not work, so splines are used. We discuss splines \emph{without} having to specify the knots.
+  Find $\argmin_{m \in C^{0}(\mathbb{R})} \sum_{i=1}^{n}(Y_{i} - m(x_{i}))^{2} + \lambda \int_{\mathbb{R}}m''(z)^{2} dz$.
+  Note that the minimizer is \emph{finite dimensional} --- it is a cubic spline that can be computed using a set of basis functions $m_{\lambda}(x) = \sum_{j=1}^{n}\beta_{j}B_{j}(x)$ or $||\vec{Y} - B\vec{\beta}||^{2}+\lambda \vec{\beta}^{\top}\Omega\vec{\beta} \Rightarrow \hat{\vec{\beta}} = {(B^{\top}B + \lambda\Omega)}^{-1}B^{\top}\vec{Y}$.
+  Choose $\lambda$ on the scale of $df = \mathbf{tr}(\mathcal{S}_{\lambda})$.
+  Note that this is Ridge-type regression, which saves us from being overparametrized ($n$ points, $n$ parameters).
+  In the exam, this is \emph{not} considered ``standard'' least squares.
   \begin{mintlinebox}{R}
-  fit.ss<-smooth.spline(x, y_pert, spar=0.6) # attr. cvcrit = loocv
-  fit.ss.pred[, i]<-predict(fit.ss, newdata=x)$y ; $
+    fit.ss<-smooth.spline(x, y_pert, spar=0.6) # attr. cvcrit = loocv
+    fit.ss.pred[, i]<-predict(fit.ss, newdata=x)$y ; $
   \end{mintlinebox}
 \end{sectionbox}
 
@@ -243,10 +231,9 @@ We would like to compute $\mathbb{E}_{(X_{\textrm new}, Y_{\textrm new})}[\rho(\
 \end{sectionbox}
 
 \section{Bootstrap}\label{sec:bootstrap}
-\textbf{ROMEO'S PART}
 Efron's \emph{parametric} and \emph{nonparametric bootstrap} can be described as ``simulating from an estimated model'' and can be used for \emph{statistical inference (confidence intervals and testing)} and \emph{estimating the predictive power of a model or algorithm}.
 
-\begin{sectionbox}[Nonparametric bootstrap]\nospacing{}
+\begin{sectionbox}[Nonparametric Bootstrap]\nospacing{}
   Let $Z_{1:n}$ i.i.d $\sim P$ with $Z_i=(X_i, Y_i), X_i \in \mathbb{R}^p, Y_i \in \mathbb{R}$, and let $\hat \theta_n = g(Z_{1:n})$ be an estimator.
   We would like to know the \emph{distribution of $\hat \theta_n$}.
   We approximate $\vec{P}$ by the\emph{empirical distribution $\hat{\vec{P}}_n$} that assigns $\mathbb{P}[X_i] = 1/n\ \forall i$.
@@ -271,59 +258,71 @@ Efron's \emph{parametric} and \emph{nonparametric bootstrap} can be described as
   Then $Op^\ast(\hat\theta_n^\ast)/Op(\hat\theta_n) \overset{P}{\to} 1$ with $Op \in \{Var, \mathbb{E}\}$.
 \end{notebox}
 
-\begin{sectionbox}[Bootstrap confidence interval]\nospacing{}
-  Given bootstrap consistence, we can compute $[\hat \theta_n - \hat q_{1-\alpha/2}, \hat\theta_n - \hat q_{\alpha/2}]$ with $\hat q_\alpha = \alpha$-(bootstrap) quantile of $\hat\theta_n^\ast - \hat \theta_n$.
+\begin{sectionbox}[Bootstrap confidence intervals]\nospacing{}
+  Given bootstrap consistence, we can compute confidence intervals: 
+  \begin{enumeratenosep}[label=\roman*]
+    \item quantile: $ [q_{\hat{\Theta}^{\ast}}(\alpha/2), q_{\hat{\Theta}^{\ast}}(1-\alpha/2)]  $
+    \item rev. quantile: $ [\hat{\Theta} - q_{\hat{\Theta}^{\ast}-\hat{\Theta}}(1-\alpha/2), \hat{\Theta} - q_{\hat{\Theta}^{\ast}-\hat{\Theta}}(\alpha/2)]   $
+    \item normal: $2\hat{\Theta}-\overline{\hat{\Theta}}^{\ast} \pm q_X(1-\alpha/2)\cdot \hat{sd}(\hat{\Theta})$ - corrects for bias $\hat{\Theta} - \hat{\Theta}^{\ast}$, $X \sim \mathcal{N}(0,1)$ 
+  \end{enumeratenosep}
+  Note $\hat q_\alpha  = q_\alpha^\ast - \hat \theta_n$ with $q_\alpha^\ast = \alpha$-bootstrap quantile of $\hat\theta_n^\ast$.
+  Thus $[\hat\theta_n -\hat q_{1-\alpha/2},\hat \theta_n - \hat q_{\alpha/2}] = [2\hat \theta_n - q_{1-\alpha/2}^\ast, 2\hat\theta_n-q_{\alpha/2}^\ast]$.
 \end{sectionbox}
-
-\textbf{LAUREN'S PART}
-\begin{sectionbox}[Nonparametric Bootstrap]
-Data $Z = (Z_1,..,Z_n) \sim P$, estimator $\hat{\Theta} = g(Z)$ (e.g. mean). i) Generate Bootstrap sample $Z^{\ast} \sim \hat{P}$ (sampling $n$ points with replacement from $Z$); ii) Compute $\hat{\Theta}^{\ast} = g(Z^{\ast})$; iii) Repeat R times $\Rightarrow \hat{\Theta}^{\ast,1},..,\hat{\Theta}^{\ast,R}$. $\mathbb{E}(\hat{\Theta}^{\ast}) = R^{-1}\sum_{i=1}^{R}\hat{\Theta}^{\ast,i} = \overline{\hat{\Theta}}^{\ast}$. Confidence intervals: 
-\begin{enumeratenosep}[label=\roman*]
-	\item quantile: $ [q_{\hat{\Theta}^{\ast}}(\alpha/2), q_{\hat{\Theta}^{\ast}}(1-\alpha/2)]  $
-	\item rev. quantile: $ [\hat{\Theta} - q_{\hat{\Theta}^{\ast}-\hat{\Theta}}(1-\alpha/2), \hat{\Theta} - q_{\hat{\Theta}^{\ast}-\hat{\Theta}}(\alpha/2)]   $
-	\item normal: $2\hat{\Theta}-\overline{\hat{\Theta}}^{\ast} \pm q_X(1-\alpha/2)\cdot \hat{sd}(\hat{\Theta})$ - corrects for bias $\hat{\Theta} - \hat{\Theta}^{\ast}$, $X \sim \mathcal{N}(0,1)$ 
-\end{enumeratenosep}
 \begin{mintlinebox}{R}
-	require("boot")
-	tm <- function(x, ind) {mean(x[ind], trim = 0.1)}
-	res.boot <- boot(data=sample,statistic=tm,R=10000,
-	sim="ordinary")
-	# 'basic'=rev.quant., 'norm'=normal, 'perc'=quant.
-	boot.ci(res.boot,conf=0.95,type=c("basic","norm","perc"))
-	?quantile ?qnorm
+  require("boot")
+  tm <- function(x, ind) {mean(x[ind], trim = 0.1)}
+  res.boot <- boot(data=sample,statistic=tm,R=10000,
+  sim="ordinary")
+  # 'basic'=rev.quant., 'norm'=normal, 'perc'=quant.
+  boot.ci(res.boot,conf=0.95,type=c("basic","norm","perc"))
+  ?quantile ?qnorm
 \end{mintlinebox}
-\end{sectionbox}
+
+\begin{mintlinebox}{R}
+  require(MASS);fit.gamma<-fitdistr(boogg, "gamma")
+  par.est<-fit.gamma$estimate $ # for parametric gen
+  boot.est <- matrix(NA, nrow=R, ncol=1)
+  for (i in 1:R) {
+    boogg.s<-rgamma(N,shape=par.est[1],rate=par.est[2])
+    # boogg.s <- sample(boogg, N, replace=T) # NP
+    boot.est[i]<-quantile(boogg.s, probs=0.75)
+  }; a <- 0.05
+  # QUANTILE
+  quantile(boot.est, probs=c(a/2, 1-a/2))
+  # NORMAL APPROXIMATION
+  mean.est <- mean(boot.est)
+  sd.hat<-sqrt(1/(R-1)*sum((boot.est-mean.est)^2))
+  2*est-mean.est + c(-1, +1)* qnorm(1-a/2)*sd.hat
+  # REVERSED QUANTILE
+  est - quantile(boot.est-est, probs=c(1-a/2, a/2))
+\end{mintlinebox}
 
 \begin{sectionbox}[Double bootstrap]
-Idea: Find $\alpha'$ s.t. actual coverage of bootstrap CI $I^{\ast}(1-\alpha')$ is equal to $\alpha$.
-\begin{enumeratenosep}[label=\roman*]
-	\item Draw BS sample $Z^{\ast}$. Sample from $Z^{\ast}$ to obtain $Z^{\ast\ast}$. Compute CI $I^{\ast\ast}(1-\alpha)$ for $\hat{\Theta}^{\ast}$ based on $B$ draws $Z^{\ast\ast}$. Compute coverage of $\hat{\Theta}$ by $I^{\ast\ast}$ (1 or 0).
-	\item Repeat i) $M$ times to obtain $M$ coverage values. Compute mean to obtain actual coverage of $I^{\ast\ast}$.
-	\item Adjust $\alpha$ and repeat previous steps until $\text{coverage}(I^{\ast\ast}(1-\alpha')) = 1 -\alpha$. Use CI $I^{\ast}(1-\alpha')$
-\end{enumeratenosep}
-
-	\begin{mintlinebox}{R}
-
-	\end{mintlinebox}		
+  Idea: Find $\alpha'$ s.t. actual coverage of bootstrap CI $I^{\ast}(1-\alpha')$ is equal to $\alpha$.
+  \begin{enumeratenosep}[label=\roman*]
+    \item Draw BS sample $Z^{\ast}$. Sample from $Z^{\ast}$ to obtain $Z^{\ast\ast}$. Compute CI $I^{\ast\ast}(1-\alpha)$ for $\hat{\Theta}^{\ast}$ based on $B$ draws $Z^{\ast\ast}$. Compute coverage of $\hat{\Theta}$ by $I^{\ast\ast}$ (1 or 0).
+    \item Repeat i) $M$ times to obtain $M$ coverage values. Compute mean to obtain actual coverage of $I^{\ast\ast}$.
+    \item Adjust $\alpha$ and repeat previous steps until $\text{coverage}(I^{\ast\ast}(1-\alpha')) = 1 -\alpha$. Use CI $I^{\ast}(1-\alpha')$
+  \end{enumeratenosep}
 \end{sectionbox}	
 
 \begin{sectionbox}[Parametric Bootstrap]
-Assume $Z = (Z_1,..,Z_n) ~i.i.d. \sim P_{\Theta}$. Fit $\hat{\Theta} = MLE(Z, P)$ and generate samples $Z^{\ast} ~i.i.d. \sim P_{\hat{\Theta}}$. Usually better than nonparametric version when $P_{\hat{\Theta}}$ is a good fit (e.g. known model structure $P$) and few data points available.
-\begin{mintlinebox}{R}
-fun.theta <- function(x) {quantile(x, probs = 0.75)}
-fun.gen <- function(x,mle) {rgamma(length(x),shape=mle[1],rate=mle[2])}
-res.boot <- boot(data,fun.theta,R=1000,sim="parametric",
-ran.gen=fun.gen,mle=fit.gamma$estimate); $
-\end{mintlinebox}		
+  Assume $Z = (Z_1,..,Z_n) ~i.i.d. \sim P_{\Theta}$. Fit $\hat{\Theta} = MLE(Z, P)$ and generate samples $Z^{\ast} ~i.i.d. \sim P_{\hat{\Theta}}$. Usually better than nonparametric version when $P_{\hat{\Theta}}$ is a good fit (e.g. known model structure $P$) and few data points available.
+  \begin{mintlinebox}{R}
+    require(MASS);mle<-fitdistr(boogg, "gamma")
+    fun.theta <- function(x) {quantile(x, probs = 0.75)}
+    fun.gen <- function(x,mle) {rgamma(length(x),shape=mle[1],rate=mle[2])}
+    res.boot <- boot(data, fun.theta, R=1000, sim="parametric", ran.gen=fun.gen, mle=fit.gamma$estimate); $
+  \end{mintlinebox}		
 \end{sectionbox}	
 
 \begin{sectionbox}[Bootstrap error estimate]
-Generalization error (loss $\rho(y,m(x))$) of model $m$ (fitted to full data set) can be estimated by fitting models $m^{\ast,i}$ to bootstrap samples and computing
-\begin{itemize}
-	\item errors on full data set $e^{\ast,i} = n^{-1}\sum_{i=1}^n \rho(y,m^{\ast,i}(x_i)) $
-	\item OOB errors $e^{\ast,i}_{ob} = n_{ob,i}^{-1}\sum_{i=1}^{n_{ob,i}} \rho(y_{ob,i},m^{\ast,i}(x_{ob,i})) $
-\end{itemize}
-The error of $m$ is then approximated by $R^{-1}\sum_{i=1}^R e^{\ast,i}$.		
+  Generalization error (loss $\rho(y,m(x))$) of model $m$ (fitted to full data set) can be estimated by fitting models $m^{\ast,i}$ to bootstrap samples and computing
+  \begin{itemize}
+    \item errors on full data set $e^{\ast,i} = n^{-1}\sum_{i=1}^n \rho(y,m^{\ast,i}(x_i)) $
+    \item OOB errors $e^{\ast,i}_{ob} = n_{ob,i}^{-1}\sum_{i=1}^{n_{ob,i}} \rho(y_{ob,i},m^{\ast,i}(x_{ob,i})) $
+  \end{itemize}
+  The error of $m$ is then approximated by $R^{-1}\sum_{i=1}^R e^{\ast,i}$.		
 \end{sectionbox}
 
 \section{Classification}\label{sec:classification}
@@ -358,56 +357,14 @@ Then, the zero-one test set error is called \emph{Bayes risk}, i.e. $\mathbb{P}[
 \end{notebox}
 \begin{notebox}[Multiclass case ($J>2$)]\nospacing{}
   \begin{enumeratenosep}
-  \item $J$ classes $\rightarrow$ $J$ binary variables: $\tilde \pi_j(x) = \frac{\hat pi_j(x)}{\sum_{j=0}^{J-1}\hat\pi_j(x)}$
-  \item Using \emph{multinomial distribution} (parametric linear logistic) (see \verb!multinom!)
-  \item ``Reference class'' $\log(\pi_j(x)/\pi_0(x)) = g_j(x)$
-  \item Pairwise 1-vs-1, fitting ${J \choose 2}\cdot p$ parameters
-  \item Exploiting ``ordered'' classes with proportional odds
+    \item $J$ classes $\rightarrow$ $J$ binary variables: $\tilde \pi_j(x) = \frac{\hat pi_j(x)}{\sum_{j=0}^{J-1}\hat\pi_j(x)}$
+    \item Using \emph{multinomial distribution} (parametric linear logistic) (see \verb!multinom!)
+    \item ``Reference class'' $\log(\pi_j(x)/\pi_0(x)) = g_j(x)$
+    \item Pairwise 1-vs-1, fitting ${J \choose 2}\cdot p$ parameters
+    \item Exploiting ``ordered'' classes with proportional odds
   \end{enumeratenosep}
 \end{notebox}
 
-\textbf{LAUREN's PART}
-\begin{sectionbox}[Discriminant Analysis]
-Assume the model $(X|Y=j) \sim \mathcal{N}_p(\mu_j, \Sigma), P[Y=j] = p_j, j=0..J-1$. Then, by Bayes:
-\[
-\mathbb{P}[Y=j|X=x] = \frac{f_{X|Y=j}(x)p_j}{\sum_{k=0}^{J-1} f_{X|Y=k}(x)p_k}
-\]
-where $f$ is density of respective Gaussian dist. Using estimates:
-\begin{enumeratenosep}[label=\roman*]
-\item $\hat{\mu}_j = n_j^{-1}\sum_{i;Y_i=j}X_i$, $p_j = n_j/n$ (usually)
-\item $\hat{\Sigma} = \frac{1}{n-J}\sum_{j=0}^{J-1}\sum_{i=1}^{n}(X_i-\hat{\mu}_j)(X_i-\hat{\mu}_j)^T \mathbf{1}_{[Y_i=j]}$
-\item$\hat{\Sigma}_j = \frac{1}{n_j-1}\sum_{i=1}^{n}(X_i-\hat{\mu}_j)(X_i-\hat{\mu}_j)^T \mathbf{1}_{[Y_i=j]}$
-\end{enumeratenosep}
-With this, the classifier becomes:
-\begin{itemize}
-	\item	$\hat{\mathcal{C}}_{LDA} = \argmax_{j} \hat{\delta}_j(x)$
-	\item $\hat{\delta}_j(x) = x^T\hat{\Sigma}^{-1}\hat{\mu}_j -\hat{\mu}_j^T\hat{\Sigma}^{-1}\hat{\mu}_j/2 + \log{\hat{p}_j} 
-	 =  (x-\hat{\mu}_j/2)^T\hat{\Sigma}^{-1}\hat{\mu}_j + \log{\hat{p}_j}$
-\end{itemize}
-For QDA, we have $\hat{\delta}_j(x) =  - \log{(\det{(\hat{\Sigma}_j)})}/2 +  (x-\hat{\mu}_j)^T\hat{\Sigma}_j^{-1} (x-\hat{\mu}_j)/2 + \log{\hat{p}_j} $
-\begin{mintlinebox}{R}
-?lda ?qda
-\end{mintlinebox}	
-\end{sectionbox}
-
-\begin{sectionbox}[Logistic Regression]
-Binary classification $Y \in \{0,1\}$, $\pi(x) = \mathcal{P}[Y=1|X]$. Linear logistic model $\log(\frac{\pi(x)}{1- \pi(x)}) = g(x) = \sum_{i=1}^p \beta_i x_i$. We have $Y_i \sim \text{Bernoulli}(\pi(x))$. Hence, the likelihood is given by $L(\beta;(x_1,Y_1),..,(x_n,Y_n))$ = $\prod_{i=1}^{n}\pi(x_i)^{Y_i}(1-\pi(x_i))^{1-Y_i}$. Neg. log likelihood:
-\begin{align*}
-	l &= -\sum_{i=1}^{n}[ Y_i \log{(\pi(x_i))} + (1-Y_i)(1- \log{(\pi(x_i))})] \\
-	&=  -\sum_{i=1}^{n}[Y_i g(x) - \log{(\exp{(g(x))} + 1)}]
-\end{align*}
-%\[l = -\sum_{i=1}^{n}[ Y_i \log{(\pi(x_i))} + (1-Y_i)(1- \log{(\pi(x_i))})] =  %-\sum_{i=1}^{n}[Y_i g(x) - \log{(\exp{(g(x))} + 1)}]
-%\]
-MLE thus yields a nonlinear optimization problem. For multiclass, define $J$ separate binary problems, yielding $\pi_j$  and use $\hat{\mathcal{C}}_{LG} = \argmax_{j} \frac{\hat{\pi}_j(x)}{\sum_{j=0}^J \hat{\pi}_j(x)}$. Alternatively, use \texttt{multinom}, multinomial distribution model with $L=\prod_{i=0}^{J-1}\pi_i^{n_i}$ and $l=\sum_{i=0}^{J-1}n_i\log{(\pi_i)}$.
-\begin{mintlinebox}{R}
-fit = glm(formula=y ~ .,family="binomial",data=data)
-# performance analysis
-require(ROCR) ?prediction ?performance
-\end{mintlinebox}	
-\end{sectionbox}
-
-
-\textbf{ROMEO's PART}
 \section{Flexible regression and classification methods}\label{sec:flexible_regression_and_classification_methods}
 We fight the \emph{curse of dimensionality} by making some structural assumptions (although staying with methods $g(\cdot): \mathbb{R}^p \to \mathbb{R}$ of nonparametric nature).
 \subsection{Additive models}%
@@ -426,7 +383,7 @@ We fight the \emph{curse of dimensionality} by making some structural assumption
     \item Cycle through the indices $j = 1,2,\dots,p,1,2,\dots,p,1,2,\dots$ and update
       $\hat g_j=\mathcal{S}_j(\vec{Y}-\hat \mu\vec{1}-\sum_{k\neq j}\hat g_k)$.
       Stop each function at convergence.
-    \item Normalize the functions: $\tilde g_j(\cdot) = \hat g_j(\cdot) - n^{-1}]sum_{i=1}^n\hat g_j(X_{ij})$.
+    \item Normalize the functions: $\tilde g_j(\cdot) = \hat g_j(\cdot) - n^{-1}\sum_{i=1}^n\hat g_j(X_{ij})$.
   \end{itemizenosep}
   This basically makes the algorithm repeatedly solve the 1-dimensional fitting problem.
   The algorithm may be slow but often works and can use any 1-dimensional fitting technique.
@@ -441,74 +398,63 @@ We fight the \emph{curse of dimensionality} by making some structural assumption
   \end{mintlinebox}
 \end{sectionbox}
 
-\textbf{LAUREN's PART}
-\begin{sectionbox}[Additive Models]
-$g_{add}(\mathbf{x}) = \mu + \sum_{j=1}^{p} g_j(x_j) : \mathbb{R}^p \rightarrow \mathbb{R}$, $\mathbb{E}[g_j(X_j)] = 0$. Nonparametric smoothers (splines, NW, etc.) $\mathcal{S}_j$ can be used on each predictor $x_j$. Smoothers can be found using backfitting:
-\begin{enumeratenosep}[label=\roman*]
-\item Set $\hat{\mu} = \overline{Y}, \hat{g}_j(\cdot) = 0$
-\item Cycle $j=1..p$: $\mathbf{\hat{g}_j} = \boldsymbol{\mathcal{S}}_j(\mathbf{Y}- \hat{\mu} -\sum_{k\neq j}\mathbf{\hat{g}}_k) \in \mathbb{R}^n $ until $\hat{g}_j$ do not change significantly (rel. tol $10^{-6}$).
-\item Normalize $\tilde{g}_j(\cdot) = \hat{g}_j(\cdot) - n^{-1}\sum_{i=1}^{n}\hat{g}_j(X_{ij})$	
-\end{enumeratenosep}
-\texttt{gam} fits penalized regression splines as smoothers. A similar, simple option is to perform linear regression with added polynomial (or any) effects. This requires explicit selcetion of effects (see variable selection), whereas \texttt{gam} selects the complexity of $\mathcal{S}_j$ automatically.
-\begin{mintlinebox}{R}
-library(mgcv)
-fit <- gam(y ~ s(x1)+ s(x2) + s(x3), data=data)
-form1 <- as.formula("y~.") #poly. LS of deg. 2 in all xj
-form2 <- wrapFormula(form1,
-	data=data,wrapString="poly(*,degree=2)")
-fit2 <- lm(form2, data=data)
-\end{mintlinebox}
-\end{sectionbox}
-
 \subsection{Multivariate adaptive regression splines}%
 \label{sub:multivariate_adaptive_regression_splines}
 \begin{sectionbox}[MARS]\nospacing{}
-$g(\mathbf{x}) = \mu + \sum_{m=1}^{M}\beta_m h_m(\mathbf{x}) = \sum_{m=0}^{M}\beta_m h_m $
-Find $h \in \mathcal{M}$ functions by foward selection and pruning:
+  $g(\mathbf{x}) = \mu + \sum_{m=1}^{M}\beta_m h_m(\mathbf{x}) = \sum_{m=0}^{M}\beta_m h_m $
+  Find $h \in \mathcal{M}$ functions by foward selection and pruning:
 
-\begin{enumeratenosep}[label=\roman*]
-	\item Initialize $\mathcal{M} = \{ h_0 = 1\}, \beta_0 = \overline{Y}$
-	\item For $r=1,2,..$: Find best pair (most reduction of RSS) $h_{2r-1}=h_l(\cdot)\times(x_j-x_{i,j})_{+}, h_{2r}=h_l(\cdot)\times(x_{i,j}-x_j)_{+}$, where $h_l \in \mathcal{M}$ does not already depend on $x_j$. Estimate $\beta_{2r-1}, \beta_{2r}$ by LS. Add $h_{2r-1}, h_{2r}$ to $\mathcal{M}$.
-	\item Repeat until $\mathcal{M}$ large enough. Prune by repeatedly removing one function from pairs $h_{2r-1}, h_{2r}$ (least increase in RSS). Stop when GCV score is optimized.
-$(x_j-d)_{+} = x_j-d$, if $x_j \geq d$, zero otherwise.
-\end{enumeratenosep}
-\begin{mintlinebox}{R}
-require("earth"); 
-fit <- earth(formula=y~.,data=data, degree=2)
-plotmo(fit, degree2=FALSE, caption="main effects")
-\end{mintlinebox}
+  \begin{enumeratenosep}[label=\roman*]
+    \item Initialize $\mathcal{M} = \{ h_0 = 1\}, \beta_0 = \overline{Y}$
+    \item For $r=1,2,..$: Find best pair (most reduction of RSS) $h_{2r-1}=h_l(\cdot)\times(x_j-x_{i,j})_{+}, h_{2r}=h_l(\cdot)\times(x_{i,j}-x_j)_{+}$, where $h_l \in \mathcal{M}$ does not already depend on $x_j$. Estimate $\beta_{2r-1}, \beta_{2r}$ by LS. Add $h_{2r-1}, h_{2r}$ to $\mathcal{M}$.
+    \item Repeat until $\mathcal{M}$ large enough. Prune by repeatedly removing one function from pairs $h_{2r-1}, h_{2r}$ (least increase in RSS). Stop when GCV score is optimized.
+      $(x_j-d)_{+} = x_j-d$, if $x_j \geq d$, zero otherwise.
+  \end{enumeratenosep}
+  \begin{mintlinebox}{R}
+    require("earth"); 
+    fit <- earth(formula=y~.,data=data, degree=2)
+    plotmo(fit, degree2=FALSE, caption="main effects")
+  \end{mintlinebox}
 \end{sectionbox}	
 
 \begin{sectionbox}[Neural networks]\nospacing{}
-	$g(\mathbf{x})_k = f_0(\alpha_k + \sum_{h=1}^{q}w_{hk}\sigma(\tilde{\alpha_h} + \sum_{j=1}^{p}\tilde{w}_{jh}x_j)) \forall k=1..J$, $q$ hidden nodes, $J$ output dim. Activation $\sigma(t) = \frac{\exp t}{1 + \exp t}$. For regression, $f_0$ identity, for classification $f_0 = \sigma$ and $\mathcal{C}_{NN} = \argmax_{j} g_j(\mathbf{x})$. Many other architectures possible, e.g. including a component directly connecting input to output by linear regression.
-	\begin{mintlinebox}{R}
-	library(nnet); ?nnet ?ppr 
-	\end{mintlinebox}
+  $g(\mathbf{x})_k = f_0(\alpha_k + \sum_{h=1}^{q}w_{hk}\sigma(\tilde{\alpha_h} + \sum_{j=1}^{p}\tilde{w}_{jh}x_j)) \forall k=1..J$, $q$ hidden nodes, $J$ output dim. Activation $\sigma(t) = \frac{\exp t}{1 + \exp t}$. For regression, $f_0$ identity, for classification $f_0 = \sigma$ and $\mathcal{C}_{NN} = \argmax_{j} g_j(\mathbf{x})$. Many other architectures possible, e.g. including a component directly connecting input to output by linear regression.
+  \begin{mintlinebox}{R}
+    library(nnet); ?nnet ?ppr 
+  \end{mintlinebox}
 \end{sectionbox}
 
 \subsection{Trees}%
 \label{sub:trees}
 \begin{sectionbox}[Classification and Regression Trees]\nospacing{}
-$g_{tree}(\mathbf{x}) = \sum_{r=1}^{M}\beta_r 1_{[\mathbf{x}\in \mathcal{R}_r]}$, where $\mathcal{P} \{\mathcal{R}_1,.., \mathcal{R}_M\}$ is a partition of $\mathbb{R}^p$. The function is piecewise constant. When partition is given, estimate $\hat{\beta}_r = \sum_{i=1}^{n}Y_i 1_{[\mathbf{x}\in \mathcal{R}_r]}/\sum_{i=1}^{n}1_{[\mathbf{x}\in \mathcal{R}_r]}$. For multiclass classification $\hat{\pi}_j(\mathbf{x}) = \sum_{i=1}^{n}1_{[Y_i =j]} 1_{[\mathbf{x}\in \mathcal{R}_r]}/\sum_{i=1}^{n}1_{[\mathbf{x}\in \mathcal{R}_r]}$ for $\mathbf{x} \in \mathcal{R}_r$. Greddy algorithm to find axes parallel partition:
-\begin{enumeratenosep}[label=\roman*]
-	\item Initialize $M=1$ subset $\mathcal{P} = \{\mathcal{R} = \mathbb{R}^p\}$
-	\item Split $\mathcal{R}$ at $d$ in dimension $j$, where $d$ is from the set of midpoints of observed values. Select $j,k$ s.t. neg. log-likelihood decrease is maximized by refinement.
-	\item Apply ii) to one cell of the current partition (select like above). Add the resulting two cells and remove the refined one. 
-	\item Iterate iii) until until specified max. partition size is achieved
-	\item Prune tree by removing leaves resulting in smalles increase in some (CV) metric.
-\end{enumeratenosep}
-We define the size of a tree $\mathcal{T}$ as the number of leaves (1 + +cuts). For some goodness-of-fit measure $\mathcal{R}(\mathcal{T})$ (e.g. SSE, NLL), the cost-complexity measure is $\mathcal{R}_{\alpha}(\mathcal{T})=\mathcal{R}(\mathcal{T}) + \alpha \text{size}(\mathcal{T}) $. For some $\alpha$, we thus choose $\mathcal{T}(\alpha) = \argmin_{\mathcal{T}\subset\mathcal{T}_M}$. $\alpha$ is then chosen by CV. 1 s.e. rule: Choose smalles tree s.t. its performance is at most one standard error larger than the minimal one. 
-
-\begin{mintlinebox}{R}
-library(rpart); require(rpart.plot); 
-# cp = alpha
-rp <- rpart(y~.,data = data,control=rpart.control(cp=0.0, minsplit=30))
-plotcp(rp); cps = printcp(tree)
-nid <- 10 # select from plot by 1se rule
-cp.opt <- cps[which(cps[,'nsplit']==nid), 'CP']
-pruned.tree = prune.rpart(tree, cp=cp.opt)
-\end{mintlinebox}
+  Let $g_{\textrm tree}(\mathbf{x}) = \sum_{r=1}^{M}\beta_r 1_{[\mathbf{x}\in \mathcal{R}_r]}$, where $\mathcal{P} \{\mathcal{R}_1,\dots, \mathcal{R}_M\}$ is a partition of $\mathbb{R}^p$.
+  The function is piecewise constant.
+  When partition is given, estimate $\hat{\beta}_r = \sum_{i=1}^{n}Y_i 1_{[\mathbf{x}\in \mathcal{R}_r]}/\sum_{i=1}^{n}1_{[\mathbf{x}\in \mathcal{R}_r]}$.
+  For multiclass classification $\hat{\pi}_j(\mathbf{x}) = \sum_{i=1}^{n}1_{[Y_i =j]} 1_{[\mathbf{x}\in \mathcal{R}_r]}/\sum_{i=1}^{n}1_{[\mathbf{x}\in \mathcal{R}_r]}$ for $\mathbf{x} \in \mathcal{R}_r$.
+  Greddy algorithm to find axes parallel partition:
+  \begin{enumeratenosep}[label=\roman*]
+    \item Initialize $M=1$ subset $\mathcal{P} = \{\mathcal{R} = \mathbb{R}^p\}$
+    \item Split $\mathcal{R}$ at $d$ in dimension $j$, where $d$ is from the set of midpoints of observed values.
+      Select $j,k$ s.t. neg. log-likelihood decrease is maximized by refinement.
+    \item Apply ii) to one cell of the current partition (select like above).
+      Add the resulting two cells and remove the refined one. 
+    \item Iterate iii) until until specified max. partition size is achieved.
+    \item Prune tree by removing leaves resulting in smalles increase in some (CV) metric.
+  \end{enumeratenosep}
+  We define the size of a tree $\mathcal{T}$ as the number of leaves (1 + +cuts).
+  For some goodness-of-fit measure $\mathcal{R}(\mathcal{T})$ (e.g. SSE, NLL), the cost-complexity measure is $\mathcal{R}_{\alpha}(\mathcal{T})=\mathcal{R}(\mathcal{T}) + \alpha \text{size}(\mathcal{T}) $.
+  For some $\alpha$, we thus choose $\mathcal{T}(\alpha) = \argmin_{\mathcal{T}\subset\mathcal{T}_M}$.
+  $\alpha$ is then chosen by CV. 1 s.e. rule: Choose smalles tree s.t. its performance is at most one standard error larger than the minimal one. 
 \end{sectionbox}
+\begin{mintlinebox}{R}
+  library(rpart); require(rpart.plot); 
+  # cp = alpha
+  rp <- rpart(y~.,data = data,control=rpart.control(cp=0.0, minsplit=30))
+  plotcp(rp); cps = printcp(tree)
+  nid <- 10 # select from plot by 1se rule
+  cp.opt <- cps[which(cps[,'nsplit']==nid), 'CP']
+  pruned.tree = prune.rpart(tree, cp=cp.opt)
+\end{mintlinebox}
 
 
 \begin{mintlinebox}{R}
@@ -519,6 +465,8 @@ pruned.tree = prune.rpart(tree, cp=cp.opt)
 
 \subsection{Ridge and Lasso}%
 \label{sub:ridge_and_lasso}
+Trade-off between $||\beta||_1$ and $||\beta||_2$ regularization, i.e. $L(\lambda_1, \lambda_2, \vec{\beta})=||\vec{Y}-X\vec{\beta}||_2^2 + \lambda_2||\vec{\beta}||_2^2+\lambda_1||\vec{\beta}||_1$ with $\alpha=\lambda_2/(\lambda_1+\lambda_2)$.
+$\alpha=1 \Leftrightarrow \lambda_2=1$ means full $L_2$-regularization, i.e.\ \emph{Lasso}, otherwise \emph{Ridge}.
 
 \begin{mintlinebox}{R}
   fit <- glmnet(x.train, y.train, lambda=100, alpha=1)
@@ -551,6 +499,6 @@ pruned.tree = prune.rpart(tree, cp=cp.opt)
   \end{enumeratenosep}
   The main tuning parameter is the stopping point $M$. Boosting \emph{increases} the bias and can be used to ensemble trees to fit more complex data. See e.g.
   \begin{mintlinebox}{R}
-      ?mboost; ?xgboost; ?gbm;
+    ?mboost; ?xgboost; ?gbm;
   \end{mintlinebox}
 \end{sectionbox}
