@@ -34,26 +34,7 @@ landscape
 \usepackage{formularyETH/extern/formularyETH_tikz}
 \usepackage{formularyETH/extern/formularyETH_coding}
 \usepackage{formularyETH/extern/formularyETH_algorithms}
-\usepackage{formularyMacros}
-\usepackage{math_submodule/formularyMacros}
 
-\usepackage{ml_submodule/formularyMacros}
-\usepackage{ml_submodule/macros/spaces}
-\usepackage{ml_submodule/macros/nlu}
-\usepackage{ml_submodule/macros/nn}
-\usepackage{ml_submodule/macros/ml}
-\usepackage{ml_submodule/macros/pac}
-\usepackage{ml_submodule/macros/graphs}
-\usepackage{ml_submodule/macros/reinforcement}
-% -----------------------------math Formulary-----------------------------------
-% if git@gitlab.vis.ethz.ch:formularies/math.git is used as submodule
-% ------------------------------------------------------------------------------
-% Uncomment next line to obtain fallback macros for math
-% \usepackage{math_submodule/formularyMacros}
-% And add next line to formulary
-% \input{math_submodule/math.tex}
-% Other very usefull packages
-% ------------------------------------------------------------------------------
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage{wrapfig}
 \usepackage[skip=0pt]{subcaption}
@@ -77,27 +58,19 @@ landscape
 % Documents Definitions title, date, ...
 % ==============================================================================
 
-\title{Title}
+\title{CompStats2021_formulary}
 % Graphic-paths important when including pdf_tikz pictures e.g. with inkscape
 % ------------------------------------------------------------------------------
-\graphicspath{{figures/}
-              %{figures/ch1/}
-        }
-
-\DeclareMathVersion{normal2}
-\DeclareMathVersion{normal3}
+\graphicspath{{figures/}}
 % ==============================================================================
 % Document begin
 % ==============================================================================
 \begin{document}
-\include{src/romeos_cheat_sheet.tex}
+\input{src/romeos_cheat_sheet.tex}
 % ==============================================================================
 % Document end
 % ==============================================================================
 \end{document}
-
-
-
 
 %%% Local Variables:
 %%% mode: latex
