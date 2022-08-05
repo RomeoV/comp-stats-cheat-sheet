@@ -83,10 +83,10 @@ We fight the \emph{curse of dimensionality} by making some structural assumption
   library(rpart); require(rpart.plot); 
   # cp = alpha
   rp <- rpart(y~.,data = data,control=rpart.control(cp=0.0, minsplit=30))
-  plotcp(rp); cps = printcp(tree)
+  plotcp(rp); cps = printcp(rp)
   nid <- 10 # select from plot by 1se rule
   cp.opt <- cps[which(cps[,'nsplit']==nid), 'CP']
-  pruned.tree = prune.rpart(tree, cp=cp.opt)
+  pruned.tree = prune.rpart(rp, cp=cp.opt)
 \end{mintlinebox}
 
 
