@@ -20,3 +20,14 @@ $ pdflatex -shell-escape formulary.tex
 #+END_SRC
 Sometimes the first run of ~pdflatex~ fails with error ~LaTeX Error: Can be used only in preamble.~
 Cancel the compilation (with =X<Enter>=) and rerun the command.
+
+Alternatively, you can use the [[https://nixos.org/download.html][~nix~]] package manager.
+If you have ~nix~ installed you need neither ~pdflatex~ nor ~pygmentize~ (as it will be installed through nix), and you can simply run
+#+begin_src
+nix-build -o formulary.pdf
+#+end_src
+or alternatively enter a shell that has ~pdflatex~ and ~minted~ installed with
+#+begin_src
+nix-shell
+#+end_src
+Note that upon the fist time running these, ~nix~ will download ~texlive-full~ which may take a while.
